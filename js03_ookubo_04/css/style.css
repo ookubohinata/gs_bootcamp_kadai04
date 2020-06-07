@@ -1,0 +1,27 @@
+/* 背景 */
+body {
+  background-color: aquamarine;
+}
+/* お名前エリア */
+#name_area {
+  display: flex;
+  align-items: center;
+}
+#name {
+  height: 17px;
+}
+#text {
+  width: 94%;
+}
+#chat_box1 {
+  background: darkgreen;
+  color: aquamarine;
+  width: 400px;
+  border-radius: 10px;
+}
+#enter_str {
+  margin-left: 10px;
+}
+#chat_time {
+  margin: -12px 0px -9px;
+}

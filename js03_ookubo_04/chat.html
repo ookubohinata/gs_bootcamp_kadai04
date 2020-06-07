@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+  </head>
+  <body>
+    <!-- ↓↓↓↓↓↓↓↓↓本体部分頭↓↓↓↓↓↓↓↓↓ -->
+
+    <!-- ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓チャット部分頭↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
+    <div id="chat_area">
+      <!-- ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓お名前頭↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
+      <div id="name_area">
+        <p id="name_string1">お名前</p>
+        <input type="text" id="name" size="8" />
+        <p id="name_string2">さん</p>
+        <p id="enter_str">enterキーでも送信が出来ます。</p>
+      </div>
+      <!--↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑お名前末↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑  -->
+
+      <textarea id="text" rows="3"></textarea>
+      <button id="send">送信</button>
+    </div>
+    <div id="output"></div>
+    <!-- ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑チャット部分末↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ -->
+
+    <!-- ↑↑↑↑↑↑↑↑↑本体部分末↑↑↑↑↑↑↑↑↑ -->
+
+    <!-- ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓jquery読み込み↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <!-- ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓firebaseCDN スクリプト頭↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.14.2/firebase.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+         https://firebase.google.com/docs/web/setup#available-libraries -->
+
+    <script>
+      // Your web app's Firebase configuration
+      var firebaseConfig = {
+        apiKey: "AIzaSyB9ZQold2wYCCERFGYlKsqwR7ixIiGNC60",
+        authDomain: "camp07-ookubo.firebaseapp.com",
+        databaseURL: "https://camp07-ookubo.firebaseio.com",
+        projectId: "camp07-ookubo",
+        storageBucket: "camp07-ookubo.appspot.com",
+        messagingSenderId: "829642394703",
+        appId: "1:829642394703:web:dc9ef682182661f6e4ee3a",
+      };
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const newPostRef = firebase.database().ref();
+      //-- ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑firebaseCDNスクリプト末↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ -->
+
+      //-- ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓チャット機能頭↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
+      //   ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓送信頭↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+      $("#send").on("click", function () {
+        var now = new Date();
+        var Year = now.getFullYear();
+        var Month = now.getMonth() + 1;
+        var date = now.getDate();
+        var Hour = now.getHours();
+        var Min = now.getMinutes();
+        var Sec = now.getSeconds();
+        var date_info =
+          Year +
+          "年" +
+          Month +
+          "月" +
+          date +
+          "日" +
+          Hour +
+          ":" +
+          Min +
+          ":" +
+          Sec;
+
+        newPostRef.push({
+          name: $("#name").val(),
+          text: $("#text").val(),
+          timestamp: date_info,
+        });
+
+        $("#text").val("");
+      });
+
+      // 送信処理２
+      $("#text").on("keydown", function (e) {
+        if (e.keyCode === 13) {
+          var now = new Date();
+          var Year = now.getFullYear();
+          var Month = now.getMonth() + 1;
+          var date = now.getDate();
+          var Hour = now.getHours();
+          var Min = now.getMinutes();
+          var Sec = now.getSeconds();
+          var date_info =
+            Year +
+            "年" +
+            Month +
+            "月" +
+            date +
+            "日" +
+            Hour +
+            ":" +
+            Min +
+            ":" +
+            Sec;
+          newPostRef.push({
+            name: $("#name").val(),
+            text: $("#text").val(),
+            timestamp: date_info,
+          });
+        }
+        $("#text").val("");
+      });
+
+      //   ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑送信末↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+
+      // ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓受信頭↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+      newPostRef.on("child_added", function (data) {
+        var v = data.val();
+        var k = data.key;
+
+        var str = `
+        <div id="chat_box1">
+            <p>${v.name}さん<br>
+            ${v.text}</p>
+        </div>
+            <p id="chat_time">${v.timestamp}</p>
+            `;
+        // 受信した情報を「id=output」に表示する
+        $("#output").prepend(str);
+      });
+      // ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑受信末↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+    </script>
+    <!-- ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑チャット機能末 -->
+  </body>
+</html>
